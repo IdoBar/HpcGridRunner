@@ -92,17 +92,20 @@ sub job_running_or_pending_on_grid {
 
     foreach my $line (split(/\n/, $response)) {
         my @x = split(/\s+/, $line);
-	my $lcl_job_id = $x[0];
-	if ($x[0] =~ /(\d+)(\.[0-9a-zA-Z])*/) {
-	    $lcl_job_id = $1;
-	}
-        if ($lcl_job_id eq $job_id) {
-            my $state = $x[4];
+	if (scalar @x > 0 ) {
+	    my $lcl_job_id = $x[0];
+	
+	    if ($x[0] =~ /(\d+)(\.[0-9a-zA-Z])*/) {
+	        $lcl_job_id = $1;
+   	    }
+            if ($lcl_job_id eq $job_id) {
+                my $state = $x[9];
             
-            $self->{job_id_to_submission_time}->{$job_id} = time();
-            return($state);
+                $self->{job_id_to_submission_time}->{$job_id} = time();
+                return($state);
             
-        }
+            }
+   	}
     }
     
     print STDERR "-no record of job_id $job_id, setting as state unknown\n";
